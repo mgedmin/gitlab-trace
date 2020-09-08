@@ -1,0 +1,10 @@
+include *.py
+include *.rst
+include .gitignore
+include .coveragerc
+include LICENSE
+include Makefile
+include mypy.ini
+include pytest.ini
+include release.mk
+include tox.ini
