@@ -4,6 +4,9 @@ Look at GitLab CI job status from the command line
 .. image:: https://travis-ci.org/mgedmin/gitlab-trace.svg?branch=master
     :target: https://travis-ci.org/mgedmin/gitlab-trace
 
+.. image:: https://coveralls.io/repos/mgedmin/gitlab-trace/badge.svg?branch=master
+    :target: https://coveralls.io/r/mgedmin/gitlab-trace
+
 Sometimes I want to look at the GitLab CI build status from my terminal ::
 
     $ gitlab-trace
