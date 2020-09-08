@@ -12,7 +12,7 @@ import urllib.parse
 import gitlab
 
 
-__version__ = "0.2.0"
+__version__ = '0.2.1.dev0'
 __author__ = "Marius Gedminas <marius@gedmin.as>"
 
 

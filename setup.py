@@ -27,6 +27,7 @@ setup(
     url='https://github.com/mgedmin/gitlab-trace',
     description='look at GitLab CI pipeline results from the command line',
     long_description=long_description,
+    long_description_content_type='text/x-rst',
     keywords='',
     classifiers=[
         "Development Status :: 4 - Beta",
