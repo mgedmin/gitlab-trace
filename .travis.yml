@@ -1,0 +1,22 @@
+language: python
+python:
+  - 3.6
+  - 3.7
+  - 3.8
+  - pypy3
+jobs:
+  include:
+    - env: TOXENV=flake8
+    - env: TOXENV=mypy
+    - env: TOXENV=check-manifest
+    - env: TOXENV=check-python-versions
+    - env: TOXENV=coverage
+      allow_failure: yes
+      after_script: pip install coveralls && coveralls
+install:
+  - pip install tox-travis
+script:
+  - tox
+notifications:
+  email: false
+cache: pip
