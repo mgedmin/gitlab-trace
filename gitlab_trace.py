@@ -91,7 +91,7 @@ def main():
         ),
     )
     parser.add_argument(
-        "job_name", nargs="?", metavar="JOB_NAME",
+        "job_name", nargs="?", metavar="JOB-NAME",
         help="select a GitLab CI pipeline job by name",
     )
     parser.add_argument(

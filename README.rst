@@ -99,7 +99,7 @@ Usage
 Help is available via ::
 
     $ gitlab-trace --help
-    usage: gitlab_trace.py [-h] [--version] [-v] [-g NAME] [-p ID] [--job ID] [-b NAME] [PIPELINE-ID] [JOB_NAME] [NTH-JOB-OF-THAT-NAME]
+    usage: gitlab_trace.py [-h] [--version] [-v] [-g NAME] [-p ID] [--job ID] [-b NAME] [PIPELINE-ID] [JOB-NAME] [NTH-JOB-OF-THAT-NAME]
 
     gitlab-trace: show the status/trace of a GitLab CI pipeline/job.
 
