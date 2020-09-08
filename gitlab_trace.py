@@ -8,11 +8,11 @@ import sys
 import subprocess
 import urllib.parse
 
-# pip install python-gitlab
+import colorama
 import gitlab
 
 
-__version__ = '0.2.1.dev0'
+__version__ = '0.3.0.dev0'
 __author__ = "Marius Gedminas <marius@gedmin.as>"
 
 
@@ -51,7 +51,23 @@ def determine_branch():
                           capture_output=True, text=True).stdout.strip()
 
 
+def fmt_status(status):
+    colors = {
+        'success': colorama.Fore.GREEN,
+        'failed': colorama.Fore.RED,
+        'running': colorama.Fore.YELLOW,
+        'pending': colorama.Fore.MAGENTA,
+        'created': colorama.Fore.CYAN,
+        'manual': colorama.Fore.BLUE,
+    }
+    if status not in colors:
+        return status
+    return colors[status] + status + colorama.Style.RESET_ALL
+
+
 def main():
+    colorama.init()
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--version", action="version",
@@ -151,7 +167,8 @@ def main():
         if not args.job:
             info(f"Available jobs for pipeline #{pipeline.id}:")
             for job in jobs:
-                print(f"   --job={job.id} - {job.status} - {job.name}")
+                status = fmt_status(job.status)
+                print(f"   --job={job.id} - {status} - {job.name}")
             sys.exit(0)
 
     job = project.jobs.get(args.job)

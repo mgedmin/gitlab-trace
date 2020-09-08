@@ -47,7 +47,10 @@ setup(
 
     py_modules=['gitlab_trace'],
     zip_safe=False,
-    install_requires=['python-gitlab'],
+    install_requires=[
+        'colorama',
+        'python-gitlab',
+    ],
     entry_points={
         'console_scripts': [
             'gitlab-trace = gitlab_trace:main',
