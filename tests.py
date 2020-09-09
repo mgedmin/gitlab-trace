@@ -1,3 +1,5 @@
+import subprocess
+
 import pytest
 
 import gitlab_trace as gt
@@ -32,3 +34,21 @@ def test_first():
 ])
 def test_determine_project(url, expected):
     assert gt.determine_project(url) == expected
+
+
+def test_determine_project_from_git(monkeypatch):
+    monkeypatch.setattr(
+        subprocess, 'run',
+        lambda *a, **kw: subprocess.CompletedProcess(
+            a, 0, stdout='https://gitlab.com/o/p\n')
+    )
+    assert gt.determine_project() == 'o/p'
+
+
+def test_determine_branch(monkeypatch):
+    monkeypatch.setattr(
+        subprocess, 'run',
+        lambda *a, **kw: subprocess.CompletedProcess(
+            a, 0, stdout='fix-bugs\n')
+    )
+    assert gt.determine_branch() == 'fix-bugs'
