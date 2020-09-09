@@ -1,7 +1,7 @@
 Changelog
 ==========
 
-0.3.0 (unreleased)
+0.3.0 (2020-09-09)
 ------------------
 
 - Colorized job status output.

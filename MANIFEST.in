@@ -2,6 +2,7 @@ include *.py
 include *.rst
 include .gitignore
 include .coveragerc
+include .travis.yml
 include LICENSE
 include Makefile
 include mypy.ini
