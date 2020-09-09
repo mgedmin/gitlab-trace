@@ -5,6 +5,7 @@ Changelog
 ------------------
 
 - Colorized job status output.
+- Do not ignore jobs beyond the first batch of 20.
 
 
 0.2.0 (2020-09-08)

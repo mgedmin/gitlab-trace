@@ -148,7 +148,7 @@ def main():
 
     if not args.job:
         pipeline = project.pipelines.get(args.pipeline)
-        jobs = list(pipeline.jobs.list())
+        jobs = list(pipeline.jobs.list(all=True))
         if args.job_name:
             found = [job.id for job in jobs if job.name == args.job_name]
             if not found:
