@@ -12,8 +12,8 @@ test:
 check:
 	TOX_SKIP_ENV=check-manifest tox -p auto
 
-.PHONY: coverage
-coverage:
-	tox -e coverage
+.PHONY: coverage mypy flake8
+coverage mypy flake8:
+	tox -e $@
 
 include release.mk

@@ -4,9 +4,10 @@ gitlab-trace: show the status/trace of a GitLab CI pipeline/job.
 """
 
 import argparse
-import sys
 import subprocess
+import sys
 import urllib.parse
+from typing import Iterable, List, Optional, TypeVar
 
 import colorama
 import gitlab
@@ -16,28 +17,31 @@ __version__ = '0.3.1.dev0'
 __author__ = "Marius Gedminas <marius@gedmin.as>"
 
 
-def fatal(msg):
+T = TypeVar('T')
+
+
+def fatal(msg: str) -> None:
     sys.exit(msg)
 
 
-def warn(msg):
+def warn(msg: str) -> None:
     print(msg, file=sys.stderr)
 
 
-def info(msg):
+def info(msg: str) -> None:
     print(msg, file=sys.stderr)
 
 
-def first(seq, default=None):
+def first(seq: Iterable[T], default: Optional[T] = None) -> Optional[T]:
     return next(iter(seq), default)
 
 
-def pipe(command):
+def pipe(command: List[str]) -> str:
     return subprocess.run(command, stdout=subprocess.PIPE,
                           universal_newlines=True).stdout.rstrip('\n')
 
 
-def determine_project(url=None):
+def determine_project(url: str = None) -> Optional[str]:
     if not url:
         url = pipe('git remote get-url origin'.split())
     if '://' not in url:
@@ -50,11 +54,11 @@ def determine_project(url=None):
     return project
 
 
-def determine_branch():
+def determine_branch() -> str:
     return pipe('git symbolic-ref HEAD --short'.split())
 
 
-def fmt_status(status):
+def fmt_status(status: str) -> str:
     colors = {
         'success': colorama.Fore.GREEN,
         'failed': colorama.Fore.RED,
@@ -68,7 +72,7 @@ def fmt_status(status):
     return colors[status] + status + colorama.Style.RESET_ALL
 
 
-def main():
+def main() -> None:
     colorama.init()
 
     parser = argparse.ArgumentParser(description=__doc__)
