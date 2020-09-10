@@ -165,7 +165,7 @@ def main():
                     args.job = found[-1]
                     info(f"Selecting the last one: {args.job}")
         if not args.job:
-            info(f"Available jobs for pipeline #{pipeline.id}:")
+            print(f"Available jobs for pipeline #{pipeline.id}:")
             for job in jobs:
                 status = fmt_status(job.status)
                 print(f"   --job={job.id} - {status} - {job.name}")
@@ -173,6 +173,7 @@ def main():
 
     job = project.jobs.get(args.job)
     sys.stdout.buffer.write(job.trace())
+    sys.exit(0)
 
 
 if __name__ == "__main__":
