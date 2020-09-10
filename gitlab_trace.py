@@ -32,10 +32,14 @@ def first(seq, default=None):
     return next(iter(seq), default)
 
 
+def pipe(command):
+    return subprocess.run(command, stdout=subprocess.PIPE,
+                          universal_newlines=True).stdout.rstrip('\n')
+
+
 def determine_project(url=None):
     if not url:
-        url = subprocess.run('git remote get-url origin'.split(),
-                             capture_output=True, text=True).stdout.strip()
+        url = pipe('git remote get-url origin'.split())
     if '://' not in url:
         return None
     if urllib.parse.urlparse(url).hostname in ('', 'github.com'):
@@ -47,8 +51,7 @@ def determine_project(url=None):
 
 
 def determine_branch():
-    return subprocess.run('git symbolic-ref HEAD --short'.split(),
-                          capture_output=True, text=True).stdout.strip()
+    return pipe('git symbolic-ref HEAD --short'.split())
 
 
 def fmt_status(status):

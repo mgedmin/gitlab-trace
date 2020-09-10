@@ -102,6 +102,10 @@ def test_first():
     assert gt.first([1, 2, 3]) == 1
 
 
+def test_pipe():
+    assert gt.pipe('echo hello'.split()) == 'hello'
+
+
 @pytest.mark.parametrize('url, expected', [
     ('https://gitlab.com/owner/project', 'owner/project'),
     ('https://gitlab.com/owner/project.git', 'owner/project'),

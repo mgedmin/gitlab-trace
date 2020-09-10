@@ -4,7 +4,9 @@ Changelog
 0.3.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- 100% test coverage.
+- Fixes for Python 3.6 compatibility (subprocess.run() doesn't
+  accept 'text' or 'capture_output' keyword arguments).
 
 
 0.3.0 (2020-09-09)
