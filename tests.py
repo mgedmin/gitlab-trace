@@ -52,3 +52,11 @@ def test_determine_branch(monkeypatch):
             a, 0, stdout='fix-bugs\n')
     )
     assert gt.determine_branch() == 'fix-bugs'
+
+
+@pytest.mark.parametrize('status, expected', [
+    ('success', '\033[32msuccess\033[0m'),
+    ('skipped', 'skipped'),
+])
+def test_fmt_status(status, expected):
+    assert gt.fmt_status(status) == expected
