@@ -1,12 +1,14 @@
 Changelog
 ==========
 
-0.3.1 (unreleased)
+0.4.0 (unreleased)
 ------------------
 
 - 100% test coverage.
 - Fixes for Python 3.6 compatibility (subprocess.run() doesn't
   accept 'text' or 'capture_output' keyword arguments).
+- ``--verbose`` shows job start/finish times and duration on stderr.
+- ``--debug`` for seeing raw JSON data available from GitLab API.
 
 
 0.3.0 (2020-09-09)

@@ -78,6 +78,11 @@ class FakeGitlabModule:
             self.id = str(id)
             self.name = name
             self.status = status
+            self.created_at = '2020-09-16T06:16:49.180Z'
+            self.started_at = '2020-09-16T06:16:51.066Z'
+            self.finished_at = None
+            self.duration = 42
+            self.attributes = {"json_attributes": "here"}
 
         def trace(self):
             return b'Hello, world!\n'
@@ -142,6 +147,22 @@ def test_determine_branch(monkeypatch):
 ])
 def test_fmt_status(status, expected):
     assert gt.fmt_status(status) == expected
+
+
+@pytest.mark.parametrize('duration, expected', [
+    (0, '0s'),
+    (1, '1s'),
+    (60, '1m'),
+    (61, '1m 1s'),
+    (3600, '1h'),
+    (3601, '1h 1s'),
+    (3660, '1h 1m'),
+    (3661, '1h 1m 1s'),
+    (958.767528, "15m 59s"),
+    (None, 'n/a'),
+])
+def test_fmt_duration(duration, expected):
+    assert gt.fmt_duration(duration) == expected
 
 
 def test_main_help(monkeypatch):
@@ -310,6 +331,43 @@ def test_main_job_by_name_multiple_nth(monkeypatch, capsys):
         GitLab project: owner/project
         Found multiple jobs: 3302 3303 3304
         Selecting #2: 3303
+    """)
+    assert stdout == textwrap.dedent("""\
+        Hello, world!
+    """)
+
+
+def test_main_job_verbose(monkeypatch, capsys):
+    monkeypatch.setattr(sys, 'argv', ['gitlab-trace', '--job=3202', '-v'])
+    monkeypatch.setattr(gt, 'determine_project', lambda: 'owner/project')
+    monkeypatch.setattr(gt, 'determine_branch', lambda: 'main')
+    with pytest.raises(SystemExit):
+        gt.main()
+    stdout, stderr = capsys.readouterr()
+    assert stderr == textwrap.dedent("""\
+        GitLab project: owner/project
+        Job created:    2020-09-16T06:16:49.180Z
+        Job started:    2020-09-16T06:16:51.066Z
+        Job finished:   not yet
+        Job duration:   42s
+    """)
+    assert stdout == textwrap.dedent("""\
+        Hello, world!
+    """)
+
+
+def test_main_job_debug(monkeypatch, capsys):
+    monkeypatch.setattr(sys, 'argv', ['gitlab-trace', '--job=3202', '--debug'])
+    monkeypatch.setattr(gt, 'determine_project', lambda: 'owner/project')
+    monkeypatch.setattr(gt, 'determine_branch', lambda: 'main')
+    with pytest.raises(SystemExit):
+        gt.main()
+    stdout, stderr = capsys.readouterr()
+    assert stderr == textwrap.dedent("""\
+        GitLab project: owner/project
+        {
+          "json_attributes": "here"
+        }
     """)
     assert stdout == textwrap.dedent("""\
         Hello, world!

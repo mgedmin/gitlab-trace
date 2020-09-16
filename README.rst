@@ -105,25 +105,30 @@ Usage
 Help is available via ::
 
     $ gitlab-trace --help
-    usage: gitlab_trace.py [-h] [--version] [-v] [-g NAME] [-p ID] [--job ID] [-b NAME] [PIPELINE-ID] [JOB-NAME] [NTH-JOB-OF-THAT-NAME]
+    usage: gitlab-trace [-h] [--version] [-v] [--debug] [-g NAME] [-p ID]
+                        [--job ID] [-b NAME] [PIPELINE-ID] [JOB-NAME] [NTH-JOB-OF-THAT-NAME]
 
     gitlab-trace: show the status/trace of a GitLab CI pipeline/job.
 
     positional arguments:
-      PIPELINE-ID           select a GitLab CI pipeline by ID (default: the last pipeline of a git branch)
-      JOB_NAME              select a GitLab CI pipeline job by name
-      NTH-JOB-OF-THAT-NAME  select n-th GitLab CI pipeline job by this name (default: the last one)
+      PIPELINE-ID           select a GitLab CI pipeline by ID (default: the
+                            last pipeline of a git branch)
+      JOB-NAME              select a GitLab CI pipeline job by name
+      NTH-JOB-OF-THAT-NAME  select n-th GitLab CI pipeline job by this name
+                            (default: the last one)
 
     optional arguments:
       -h, --help            show this help message and exit
       --version             show program's version number and exit
       -v, --verbose         print more information
+      --debug               print even more information, for debugging
       -g NAME, --gitlab NAME
                             select configuration section in ~/.python-gitlab.cfg
       -p ID, --project ID   select GitLab project ('group/project' or the numeric ID)
       --job ID              show the trace of GitLab CI job with this ID
       -b NAME, --branch NAME, --ref NAME
-                            show the last pipeline of this git branch (default: the currently checked out branch)
+                            show the last pipeline of this git branch (default:
+                            the currently checked out branch)
 
 
 .. _python-gitlab: https://pypi.org/p/python-gitlab

@@ -4,6 +4,7 @@ gitlab-trace: show the status/trace of a GitLab CI pipeline/job.
 """
 
 import argparse
+import json
 import subprocess
 import sys
 import urllib.parse
@@ -13,7 +14,7 @@ import colorama
 import gitlab
 
 
-__version__ = '0.3.1.dev0'
+__version__ = '0.4.0.dev0'
 __author__ = "Marius Gedminas <marius@gedmin.as>"
 
 
@@ -72,6 +73,21 @@ def fmt_status(status: str) -> str:
     return colors[status] + status + colorama.Style.RESET_ALL
 
 
+def fmt_duration(duration: Optional[float]) -> str:
+    if duration is None:
+        return 'n/a'
+    m, s = divmod(round(duration), 60)
+    h, m = divmod(m, 60)
+    bits = []
+    if h:
+        bits.append(f"{h}h")
+    if m:
+        bits.append(f"{m}m")
+    if s or not bits:
+        bits.append(f"{s}s")
+    return " ".join(bits)
+
+
 def main() -> None:
     colorama.init()
 
@@ -86,6 +102,10 @@ def main() -> None:
     parser.add_argument(
         "-v", "--verbose", action="store_true",
         help="print more information",
+    )
+    parser.add_argument(
+        "--debug", action="store_true",
+        help="print even more information, for debugging",
     )
     parser.add_argument(
         "-g", "--gitlab", metavar="NAME",
@@ -179,6 +199,13 @@ def main() -> None:
             sys.exit(0)
 
     job = project.jobs.get(args.job)
+    if args.verbose:
+        info(f"Job created:    {job.created_at}")
+        info(f"Job started:    {job.started_at or 'not yet'}")
+        info(f"Job finished:   {job.finished_at or 'not yet'}")
+        info(f"Job duration:   {fmt_duration(job.duration)}")
+    if args.debug:
+        info(json.dumps(job.attributes, indent=2))
     sys.stdout.buffer.write(job.trace())
     sys.exit(0)
 
