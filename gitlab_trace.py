@@ -88,7 +88,7 @@ def fmt_duration(duration: Optional[float]) -> str:
     return " ".join(bits)
 
 
-def main() -> None:
+def _main() -> None:
     colorama.init()
 
     parser = argparse.ArgumentParser(description=__doc__)
@@ -208,6 +208,14 @@ def main() -> None:
         info(json.dumps(job.attributes, indent=2))
     sys.stdout.buffer.write(job.trace())
     sys.exit(0)
+
+
+def main() -> None:
+    try:
+        _main()
+    except (KeyboardInterrupt, BrokenPipeError):
+        # suppress tracebacks from these
+        sys.exit(0)
 
 
 if __name__ == "__main__":

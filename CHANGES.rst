@@ -4,7 +4,7 @@ Changelog
 0.4.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Suppress tracebacks for keyboard interrupt or broken pipe errors.
 
 
 0.4.0 (2020-09-16)

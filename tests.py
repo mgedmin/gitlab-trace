@@ -372,3 +372,14 @@ def test_main_job_debug(monkeypatch, capsys):
     assert stdout == textwrap.dedent("""\
         Hello, world!
     """)
+
+
+def raise_keyboard_interrupt(*args, **kw):
+    raise KeyboardInterrupt()
+
+
+def test_main_suppresses_keyboard_interrupt(monkeypatch, capsys):
+    monkeypatch.setattr(sys, 'argv', ['gitlab-trace', '--job=3202'])
+    monkeypatch.setattr(gt, 'determine_project', raise_keyboard_interrupt)
+    with pytest.raises(SystemExit):
+        gt.main()
