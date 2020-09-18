@@ -1,10 +1,12 @@
 Changelog
 ==========
 
-0.4.1 (unreleased)
+0.5.0 (unreleased)
 ------------------
 
 - Suppress tracebacks for keyboard interrupt or broken pipe errors.
+- ``-a``/``--artifacts`` for downloading a job's artifacts.zip to the current
+  working directory.
 
 
 0.4.0 (2020-09-16)

@@ -14,7 +14,7 @@ import colorama
 import gitlab
 
 
-__version__ = '0.4.1.dev0'
+__version__ = '0.5.0.dev0'
 __author__ = "Marius Gedminas <marius@gedmin.as>"
 
 
@@ -88,6 +88,16 @@ def fmt_duration(duration: Optional[float]) -> str:
     return " ".join(bits)
 
 
+def fmt_size(size: Optional[float]) -> str:
+    if size is None:
+        return 'n/a'
+    for unit in 'B', 'KiB', 'MiB':
+        if size < 1024:
+            break
+        size /= 1024
+    return f'{size:.1f}'.rstrip('0').rstrip('.') + f' {unit}'
+
+
 def _main() -> None:
     colorama.init()
 
@@ -125,6 +135,10 @@ def _main() -> None:
             "show the last pipeline of this git branch"
             " (default: the currently checked out branch)"
         ),
+    )
+    parser.add_argument(
+        "-a", "--artifacts", action="store_true",
+        help="download build artifacts",
     )
     parser.add_argument(
         "pipeline", nargs="?", metavar="PIPELINE-ID",
@@ -207,6 +221,11 @@ def _main() -> None:
     if args.debug:
         info(json.dumps(job.attributes, indent=2))
     sys.stdout.buffer.write(job.trace())
+    if args.artifacts:
+        filename = job.artifacts_file['filename']
+        info(f"Artifacts: {filename} ({fmt_size(job.artifacts_file['size'])})")
+        with open(filename, "xb") as f:
+            job.artifacts(streamed=True, action=f.write)
     sys.exit(0)
 
 

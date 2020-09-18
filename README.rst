@@ -106,7 +106,8 @@ Help is available via ::
 
     $ gitlab-trace --help
     usage: gitlab-trace [-h] [--version] [-v] [--debug] [-g NAME] [-p ID]
-                        [--job ID] [-b NAME] [PIPELINE-ID] [JOB-NAME] [NTH-JOB-OF-THAT-NAME]
+                        [--job ID] [-b NAME] [-a]
+                        [PIPELINE-ID] [JOB-NAME] [NTH-JOB-OF-THAT-NAME]
 
     gitlab-trace: show the status/trace of a GitLab CI pipeline/job.
 
@@ -124,11 +125,13 @@ Help is available via ::
       --debug               print even more information, for debugging
       -g NAME, --gitlab NAME
                             select configuration section in ~/.python-gitlab.cfg
-      -p ID, --project ID   select GitLab project ('group/project' or the numeric ID)
+      -p ID, --project ID   select GitLab project ('group/project' or the
+                            numeric ID)
       --job ID              show the trace of GitLab CI job with this ID
       -b NAME, --branch NAME, --ref NAME
                             show the last pipeline of this git branch (default:
                             the currently checked out branch)
+      -a, --artifacts       download build artifacts
 
 
 .. _python-gitlab: https://pypi.org/p/python-gitlab

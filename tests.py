@@ -82,7 +82,14 @@ class FakeGitlabModule:
             self.started_at = '2020-09-16T06:16:51.066Z'
             self.finished_at = None
             self.duration = 42
+            self.artifacts_file = {
+                'filename': 'artifacts.zip',
+                'size': 0,
+            }
             self.attributes = {"json_attributes": "here"}
+
+        def artifacts(self, streamed=False, action=None):
+            pass
 
         def trace(self):
             return b'Hello, world!\n'
@@ -163,6 +170,19 @@ def test_fmt_status(status, expected):
 ])
 def test_fmt_duration(duration, expected):
     assert gt.fmt_duration(duration) == expected
+
+
+@pytest.mark.parametrize('size, expected', [
+    (0, '0 B'),
+    (1, '1 B'),
+    (1024, '1 KiB'),
+    (1124, '1.1 KiB'),
+    (1024**2, '1 MiB'),
+    (3.2 * 1024**2, '3.2 MiB'),
+    (None, 'n/a'),
+])
+def test_fmt_size(size, expected):
+    assert gt.fmt_size(size) == expected
 
 
 def test_main_help(monkeypatch):
@@ -368,6 +388,23 @@ def test_main_job_debug(monkeypatch, capsys):
         {
           "json_attributes": "here"
         }
+    """)
+    assert stdout == textwrap.dedent("""\
+        Hello, world!
+    """)
+
+
+def test_main_job_artefacts(monkeypatch, capsys, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(sys, 'argv', ['gitlab-trace', '--job=3202', '-a'])
+    monkeypatch.setattr(gt, 'determine_project', lambda: 'owner/project')
+    monkeypatch.setattr(gt, 'determine_branch', lambda: 'main')
+    with pytest.raises(SystemExit):
+        gt.main()
+    stdout, stderr = capsys.readouterr()
+    assert stderr == textwrap.dedent("""\
+        GitLab project: owner/project
+        Artifacts: artifacts.zip (0 B)
     """)
     assert stdout == textwrap.dedent("""\
         Hello, world!
