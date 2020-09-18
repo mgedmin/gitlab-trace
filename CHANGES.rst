@@ -1,7 +1,7 @@
 Changelog
 ==========
 
-0.5.0 (unreleased)
+0.5.0 (2020-09-18)
 ------------------
 
 - Suppress tracebacks for keyboard interrupt or broken pipe errors.
