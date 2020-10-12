@@ -4,7 +4,8 @@ Changelog
 0.5.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Warn about unused command-line arguments (--branch when --job or
+  pipeline is specified, --artifacts when no job is specified).
 
 
 0.5.0 (2020-09-18)

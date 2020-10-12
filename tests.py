@@ -197,7 +197,7 @@ def test_main_warn_extra_args(monkeypatch, capsys):
     with pytest.raises(SystemExit):
         gt.main()
     assert (
-        'Ignoring pipeline (456) because --job=123 is specified'
+        'Ignoring pipeline (456) because --job=123 was specified'
         in capsys.readouterr().err
     )
 
@@ -266,6 +266,26 @@ def test_main_list_jobs(monkeypatch, capsys):
         GitLab project: owner/project
         Current branch: main
         https://git.example.com/owner/project/pipelines/1005
+    """)
+    assert stdout == textwrap.dedent("""\
+        Available jobs for pipeline #1005:
+           --job=3201 - success - build
+           --job=3202 - failed - test
+    """)
+
+
+def test_main_artifacts_no_job_selected(monkeypatch, capsys):
+    monkeypatch.setattr(sys, 'argv', ['gitlab-trace', '-a'])
+    monkeypatch.setattr(gt, 'determine_project', lambda: 'owner/project')
+    monkeypatch.setattr(gt, 'determine_branch', lambda: 'main')
+    with pytest.raises(SystemExit):
+        gt.main()
+    stdout, stderr = capsys.readouterr()
+    assert stderr == textwrap.dedent("""\
+        GitLab project: owner/project
+        Current branch: main
+        https://git.example.com/owner/project/pipelines/1005
+        Ignoring --artifacts because no job was selected.
     """)
     assert stdout == textwrap.dedent("""\
         Available jobs for pipeline #1005:
@@ -354,6 +374,34 @@ def test_main_job_by_name_multiple_nth(monkeypatch, capsys):
     """)
     assert stdout == textwrap.dedent("""\
         Hello, world!
+    """)
+
+
+def test_main_branch_ignored_because_job(monkeypatch, capsys):
+    monkeypatch.setattr(sys, 'argv', [
+        'gitlab-trace', '--job=3202', '--branch=foo'])
+    monkeypatch.setattr(gt, 'determine_project', lambda: 'owner/project')
+    monkeypatch.setattr(gt, 'determine_branch', lambda: 'main')
+    with pytest.raises(SystemExit):
+        gt.main()
+    stdout, stderr = capsys.readouterr()
+    assert stderr == textwrap.dedent("""\
+        GitLab project: owner/project
+        Ignoring --branch=foo because --job=3202 was specified
+    """)
+
+
+def test_main_branch_ignored_because_pipeline(monkeypatch, capsys):
+    monkeypatch.setattr(sys, 'argv', [
+        'gitlab-trace', '1005', '--branch=foo'])
+    monkeypatch.setattr(gt, 'determine_project', lambda: 'owner/project')
+    monkeypatch.setattr(gt, 'determine_branch', lambda: 'main')
+    with pytest.raises(SystemExit):
+        gt.main()
+    stdout, stderr = capsys.readouterr()
+    assert stderr == textwrap.dedent("""\
+        GitLab project: owner/project
+        Ignoring --branch=foo because pipeline (1005) was specified
     """)
 
 

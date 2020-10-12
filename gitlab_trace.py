@@ -162,7 +162,7 @@ def _main() -> None:
 
     if args.job and args.pipeline:
         warn(f"Ignoring pipeline ({args.pipeline})"
-             f" because --job={args.job} is specified")
+             f" because --job={args.job} was specified")
 
     if not args.project:
         args.project = determine_project()
@@ -186,6 +186,14 @@ def _main() -> None:
         else:
             fatal(f"Project {args.project} doesn't have any pipelines"
                   f" for branch {args.branch}")
+    elif args.branch:
+        if args.job:
+            warn(f"Ignoring --branch={args.branch}"
+                 f" because --job={args.job} was specified")
+        else:
+            assert args.pipeline
+            warn(f"Ignoring --branch={args.branch}"
+                 f" because pipeline ({args.pipeline}) was specified")
 
     if not args.job:
         pipeline = project.pipelines.get(args.pipeline)
@@ -210,6 +218,8 @@ def _main() -> None:
             for job in jobs:
                 status = fmt_status(job.status)
                 print(f"   --job={job.id} - {status} - {job.name}")
+            if args.artifacts:
+                warn("Ignoring --artifacts because no job was selected.")
             sys.exit(0)
 
     job = project.jobs.get(args.job)
