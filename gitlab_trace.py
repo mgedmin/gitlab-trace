@@ -206,7 +206,7 @@ def _main() -> None:
                 args.job = found[0]
                 info(f"Job ID: {args.job}")
             else:
-                info(f"Found multiple jobs: {' '.join(found)}")
+                info(f"Found multiple jobs: {' '.join(map(str, found))}")
                 if args.idx is not None:
                     args.job = found[args.idx - 1]
                     info(f"Selecting #{args.idx}: {args.job}")

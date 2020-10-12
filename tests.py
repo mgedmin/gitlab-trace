@@ -75,7 +75,7 @@ class FakeGitlabModule:
 
     class ProjectJob:
         def __init__(self, id, name, status):
-            self.id = str(id)
+            self.id = id
             self.name = name
             self.status = status
             self.created_at = '2020-09-16T06:16:49.180Z'

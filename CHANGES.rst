@@ -6,6 +6,8 @@ Changelog
 
 - Warn about unused command-line arguments (--branch when --job or
   pipeline is specified, --artifacts when no job is specified).
+- Fix TypeError: sequence item 0: expected str instance, int found
+  while printing "Found multiple jobs"
 
 
 0.5.0 (2020-09-18)
