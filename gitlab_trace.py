@@ -133,6 +133,10 @@ def _main() -> None:
         ),
     )
     parser.add_argument(
+        "--print-url", action="store_true",
+        help="print URL to job page on GitLab instead of printing job's log",
+    )
+    parser.add_argument(
         "-a", "--artifacts", action="store_true",
         help="download build artifacts",
     )
@@ -224,6 +228,8 @@ def _main() -> None:
                 print(f"   --job={job.id} - {status} - {job.name}")
             if args.artifacts:
                 warn("Ignoring --artifacts because no job was selected.")
+            if args.print_url:
+                warn("Ignoring --print-url because no job was selected.")
             sys.exit(0)
 
     job = project.jobs.get(args.job)
@@ -234,7 +240,10 @@ def _main() -> None:
         info(f"Job duration:   {fmt_duration(job.duration)}")
     if args.debug:
         info(json.dumps(job.attributes, indent=2))
-    sys.stdout.buffer.write(job.trace())
+    if args.print_url:
+        print(f"{project.web_url}/-/jobs/{job.id}")
+    else:
+        sys.stdout.buffer.write(job.trace())
     if args.artifacts:
         filename = job.artifacts_file['filename']
         info(f"Artifacts: {filename} ({fmt_size(job.artifacts_file['size'])})")

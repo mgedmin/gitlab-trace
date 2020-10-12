@@ -298,6 +298,21 @@ def test_main_artifacts_no_job_selected(monkeypatch, capsys):
     """)
 
 
+def test_main_print_url_no_job_selected(monkeypatch, capsys):
+    monkeypatch.setattr(sys, 'argv', ['gitlab-trace', '--print-url'])
+    monkeypatch.setattr(gt, 'determine_project', lambda: 'owner/project')
+    monkeypatch.setattr(gt, 'determine_branch', lambda: 'main')
+    with pytest.raises(SystemExit):
+        gt.main()
+    stdout, stderr = capsys.readouterr()
+    assert stderr == textwrap.dedent("""\
+        GitLab project: owner/project
+        Current branch: main
+        https://git.example.com/owner/project/pipelines/1005
+        Ignoring --print-url because no job was selected.
+    """)
+
+
 def test_main_job_by_id(monkeypatch, capsys):
     monkeypatch.setattr(sys, 'argv', ['gitlab-trace', '--job=3202'])
     monkeypatch.setattr(gt, 'determine_project', lambda: 'owner/project')
@@ -443,6 +458,23 @@ def test_main_job_debug(monkeypatch, capsys):
     """)
     assert stdout == textwrap.dedent("""\
         Hello, world!
+    """)
+
+
+def test_main_print_url(monkeypatch, capsys, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(sys, 'argv', [
+        'gitlab-trace', '--job=3202', '--print-url'])
+    monkeypatch.setattr(gt, 'determine_project', lambda: 'owner/project')
+    monkeypatch.setattr(gt, 'determine_branch', lambda: 'main')
+    with pytest.raises(SystemExit):
+        gt.main()
+    stdout, stderr = capsys.readouterr()
+    assert stderr == textwrap.dedent("""\
+        GitLab project: owner/project
+    """)
+    assert stdout == textwrap.dedent("""\
+        https://git.example.com/owner/project/-/jobs/3202
     """)
 
 
