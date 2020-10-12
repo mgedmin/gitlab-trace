@@ -8,13 +8,13 @@ import json
 import subprocess
 import sys
 import urllib.parse
-from typing import Iterable, List, Optional, TypeVar
+from typing import List, Optional, TypeVar
 
 import colorama
 import gitlab
 
 
-__version__ = '0.5.1.dev0'
+__version__ = '0.6.0.dev0'
 __author__ = "Marius Gedminas <marius@gedmin.as>"
 
 
@@ -31,10 +31,6 @@ def warn(msg: str) -> None:
 
 def info(msg: str) -> None:
     print(msg, file=sys.stderr)
-
-
-def first(seq: Iterable[T], default: Optional[T] = None) -> Optional[T]:
-    return next(iter(seq), default)
 
 
 def pipe(command: List[str]) -> str:
@@ -141,7 +137,7 @@ def _main() -> None:
         help="download build artifacts",
     )
     parser.add_argument(
-        "pipeline", nargs="?", metavar="PIPELINE-ID",
+        "pipeline", nargs="?", type=int, metavar="PIPELINE-ID",
         help=(
             "select a GitLab CI pipeline by ID"
             " (default: the last pipeline of a git branch)"
@@ -174,17 +170,25 @@ def _main() -> None:
     gl = gitlab.Gitlab.from_config(args.gitlab)
     project = gl.projects.get(args.project)
 
-    if not args.job and not args.pipeline:
+    if not args.job and (not args.pipeline or args.pipeline < 0):
         if not args.branch:
             args.branch = determine_branch()
             info(f"Current branch: {args.branch}")
 
-        pipeline = first(project.pipelines.list(ref=args.branch))
+        pipelines = list(project.pipelines.list(ref=args.branch))
+        which = args.pipeline or -1
+        try:
+            pipeline = pipelines[-which-1]
+        except IndexError:
+            pipeline = None
         if pipeline:
             args.pipeline = pipeline.id
             info(f"{project.web_url}/pipelines/{pipeline.id}")
-        else:
+        elif not pipelines:
             fatal(f"Project {args.project} doesn't have any pipelines"
+                  f" for branch {args.branch}")
+        else:
+            fatal(f"Project {args.project} has only {len(pipelines)} pipelines"
                   f" for branch {args.branch}")
     elif args.branch:
         if args.job:

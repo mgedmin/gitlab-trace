@@ -108,12 +108,6 @@ def test_info():
     gt.info("ice cream is yummy")
 
 
-def test_first():
-    assert gt.first([]) is None
-    assert gt.first([1]) == 1
-    assert gt.first([1, 2, 3]) == 1
-
-
 def test_pipe():
     assert gt.pipe('echo hello'.split()) == 'hello'
 
@@ -240,6 +234,16 @@ def test_main_no_pipelines(monkeypatch, capsys):
     with pytest.raises(SystemExit,
                        match="Project owner/project doesn't have any pipelines"
                              " for branch empty"):
+        gt.main()
+
+
+def test_main_not_enough_pipelines(monkeypatch, capsys):
+    monkeypatch.setattr(sys, 'argv', ['gitlab-trace', '-5'])
+    monkeypatch.setattr(gt, 'determine_project', lambda: 'owner/project')
+    monkeypatch.setattr(gt, 'determine_branch', lambda: 'main')
+    with pytest.raises(SystemExit,
+                       match="Project owner/project has only 2 pipelines"
+                             " for branch main"):
         gt.main()
 
 

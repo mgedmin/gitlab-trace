@@ -1,11 +1,13 @@
 Changelog
 ==========
 
-0.5.1 (unreleased)
+0.6.0 (unreleased)
 ------------------
 
 - Warn about unused command-line arguments (--branch when --job or
   pipeline is specified, --artifacts when no job is specified).
+- Allow referring to the Nth latest pipeline with -1, -2, -3 instead
+  of the pipeline number.
 - Fix TypeError: sequence item 0: expected str instance, int found
   while printing "Found multiple jobs"
 
