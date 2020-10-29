@@ -11,6 +11,7 @@ Changelog
 - Fix TypeError: sequence item 0: expected str instance, int found
   while printing "Found multiple jobs"
 - ``--print-url`` for printing the job's URL instead of dumping the log.
+- Add Python 3.9 support.
 
 
 0.5.0 (2020-09-18)
