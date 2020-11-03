@@ -133,7 +133,7 @@ def _main() -> None:
         ),
     )
     parser.add_argument(
-        "--print-url", action="store_true",
+        "--print-url", "--print-uri", action="store_true",
         help="print URL to job page on GitLab instead of printing job's log",
     )
     parser.add_argument(
