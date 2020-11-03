@@ -1,7 +1,7 @@
 Changelog
 ==========
 
-0.6.0 (unreleased)
+0.6.0 (2020-11-03)
 ------------------
 
 - Warn about unused command-line arguments (--branch when --job or
