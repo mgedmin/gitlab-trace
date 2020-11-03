@@ -10,7 +10,8 @@ Changelog
   of the pipeline number.
 - Fix TypeError: sequence item 0: expected str instance, int found
   while printing "Found multiple jobs"
-- ``--print-url`` for printing the job's URL instead of dumping the log.
+- ``--print-url`` for printing the job's or pipeline's URL instead of dumping
+  the log/list of jobs.
 - Add Python 3.9 support.
 
 

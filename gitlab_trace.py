@@ -187,7 +187,8 @@ def _main() -> None:
             pipeline = None
         if pipeline:
             args.pipeline = pipeline.id
-            info(f"{project.web_url}/pipelines/{pipeline.id}")
+            if not args.print_url or args.job_name:
+                info(f"{project.web_url}/pipelines/{pipeline.id}")
         elif not pipelines:
             fatal(f"Project {args.project} doesn't have any pipelines"
                   f" for branch {args.branch}")
@@ -221,6 +222,9 @@ def _main() -> None:
                 else:
                     args.job = found[-1]
                     info(f"Selecting the last one: {args.job}")
+        elif args.print_url:
+            print(f"{project.web_url}/pipelines/{pipeline.id}")
+            sys.exit(0)
         if not args.job:
             print(f"Available jobs for pipeline #{pipeline.id}:")
             for job in jobs:

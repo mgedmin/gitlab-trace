@@ -298,7 +298,7 @@ def test_main_artifacts_no_job_selected(monkeypatch, capsys):
     """)
 
 
-def test_main_print_url_no_job_selected(monkeypatch, capsys):
+def test_main_print_url_no_job_specified(monkeypatch, capsys):
     monkeypatch.setattr(sys, 'argv', ['gitlab-trace', '--print-url'])
     monkeypatch.setattr(gt, 'determine_project', lambda: 'owner/project')
     monkeypatch.setattr(gt, 'determine_branch', lambda: 'main')
@@ -308,7 +308,25 @@ def test_main_print_url_no_job_selected(monkeypatch, capsys):
     assert stderr == textwrap.dedent("""\
         GitLab project: owner/project
         Current branch: main
+    """)
+    assert stdout == textwrap.dedent("""\
         https://git.example.com/owner/project/pipelines/1005
+    """)
+
+
+def test_main_print_url_no_job_selected(monkeypatch, capsys):
+    monkeypatch.setattr(sys, 'argv', [
+        'gitlab-trace', '-1', 'tsets', '--print-url'])
+    monkeypatch.setattr(gt, 'determine_project', lambda: 'owner/project')
+    monkeypatch.setattr(gt, 'determine_branch', lambda: 'main')
+    with pytest.raises(SystemExit):
+        gt.main()
+    stdout, stderr = capsys.readouterr()
+    assert stderr == textwrap.dedent("""\
+        GitLab project: owner/project
+        Current branch: main
+        https://git.example.com/owner/project/pipelines/1005
+        Job tsets not found
         Ignoring --print-url because no job was selected.
     """)
 
