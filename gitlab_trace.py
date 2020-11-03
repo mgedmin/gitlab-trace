@@ -252,6 +252,9 @@ def _main() -> None:
     else:
         sys.stdout.buffer.write(job.trace())
     if args.artifacts:
+        if not hasattr(job, 'artifacts_file'):
+            warn("Job has no artifacts.")
+            sys.exit(1)
         filename = job.artifacts_file['filename']
         info(f"Artifacts: {filename} ({fmt_size(job.artifacts_file['size'])})")
         with open(filename, "xb") as f:

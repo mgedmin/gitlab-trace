@@ -67,15 +67,17 @@ class FakeGitlabModule:
             else:
                 return [
                     FakeGitlabModule.ProjectJob(3201, 'build', 'success'),
-                    FakeGitlabModule.ProjectJob(3202, 'test', 'failed'),
+                    FakeGitlabModule.ProjectJob(3202, 'test', 'failed',
+                                                has_artifacts=True),
                 ]
 
     class ProjectJobs:
         def get(self, job_id):
-            return FakeGitlabModule.ProjectJob(job_id, 'build', 'success')
+            return FakeGitlabModule.ProjectJob(
+                job_id, 'build', 'success', has_artifacts=(job_id == '3202'))
 
     class ProjectJob:
-        def __init__(self, id, name, status):
+        def __init__(self, id, name, status, has_artifacts=False):
             self.id = id
             self.name = name
             self.status = status
@@ -83,10 +85,11 @@ class FakeGitlabModule:
             self.started_at = '2020-09-16T06:16:51.066Z'
             self.finished_at = None
             self.duration = 42
-            self.artifacts_file = {
-                'filename': 'artifacts.zip',
-                'size': 0,
-            }
+            if has_artifacts:
+                self.artifacts_file = {
+                    'filename': 'artifacts.zip',
+                    'size': 0,
+                }
             self.attributes = {"type": "job", "json_attributes": "here"}
 
         def artifacts(self, streamed=False, action=None):
@@ -527,6 +530,23 @@ def test_main_job_artefacts(monkeypatch, capsys, tmp_path):
     assert stderr == textwrap.dedent("""\
         GitLab project: owner/project
         Artifacts: artifacts.zip (0 B)
+    """)
+    assert stdout == textwrap.dedent("""\
+        Hello, world!
+    """)
+
+
+def test_main_job_artefacts_nope(monkeypatch, capsys, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(sys, 'argv', ['gitlab-trace', '--job=3201', '-a'])
+    monkeypatch.setattr(gt, 'determine_project', lambda: 'owner/project')
+    monkeypatch.setattr(gt, 'determine_branch', lambda: 'main')
+    with pytest.raises(SystemExit):
+        gt.main()
+    stdout, stderr = capsys.readouterr()
+    assert stderr == textwrap.dedent("""\
+        GitLab project: owner/project
+        Job has no artifacts.
     """)
     assert stdout == textwrap.dedent("""\
         Hello, world!

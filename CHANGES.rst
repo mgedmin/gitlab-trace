@@ -4,7 +4,8 @@ Changelog
 0.6.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Gracefully handle a job having no artifacts instead of spewing chained
+  tracebacks.
 
 
 0.6.0 (2020-11-03)
