@@ -222,9 +222,12 @@ def _main() -> None:
                 else:
                     args.job = found[-1]
                     info(f"Selecting the last one: {args.job}")
-        elif args.print_url:
-            print(f"{project.web_url}/pipelines/{pipeline.id}")
-            sys.exit(0)
+        else:
+            if args.debug:
+                info(json.dumps(pipeline.attributes, indent=2))
+            if args.print_url:
+                print(f"{project.web_url}/pipelines/{pipeline.id}")
+                sys.exit(0)
         if not args.job:
             print(f"Available jobs for pipeline #{pipeline.id}:")
             for job in jobs:

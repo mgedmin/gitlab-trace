@@ -12,6 +12,7 @@ Changelog
   while printing "Found multiple jobs"
 - ``--print-url`` for printing the job's or pipeline's URL instead of dumping
   the log/list of jobs.
+- ``--debug`` now works for pipelines as well.
 - Add Python 3.9 support.
 
 

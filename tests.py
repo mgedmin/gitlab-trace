@@ -50,6 +50,7 @@ class FakeGitlabModule:
         def __init__(self, id):
             self.id = str(id)
             self.jobs = FakeGitlabModule.PipelineJobs(self)
+            self.attributes = {"type": "pipeline", "json_attributes": "here"}
 
     class PipelineJobs:
         def __init__(self, project_pipeline):
@@ -86,7 +87,7 @@ class FakeGitlabModule:
                 'filename': 'artifacts.zip',
                 'size': 0,
             }
-            self.attributes = {"json_attributes": "here"}
+            self.attributes = {"type": "job", "json_attributes": "here"}
 
         def artifacts(self, streamed=False, action=None):
             pass
@@ -298,6 +299,24 @@ def test_main_artifacts_no_job_selected(monkeypatch, capsys):
     """)
 
 
+def test_main_pipeline_debug(monkeypatch, capsys):
+    monkeypatch.setattr(sys, 'argv', ['gitlab-trace', '--debug'])
+    monkeypatch.setattr(gt, 'determine_project', lambda: 'owner/project')
+    monkeypatch.setattr(gt, 'determine_branch', lambda: 'main')
+    with pytest.raises(SystemExit):
+        gt.main()
+    stdout, stderr = capsys.readouterr()
+    assert stderr == textwrap.dedent("""\
+        GitLab project: owner/project
+        Current branch: main
+        https://git.example.com/owner/project/pipelines/1005
+        {
+          "type": "pipeline",
+          "json_attributes": "here"
+        }
+    """)
+
+
 def test_main_print_url_no_job_specified(monkeypatch, capsys):
     monkeypatch.setattr(sys, 'argv', ['gitlab-trace', '--print-url'])
     monkeypatch.setattr(gt, 'determine_project', lambda: 'owner/project')
@@ -471,6 +490,7 @@ def test_main_job_debug(monkeypatch, capsys):
     assert stderr == textwrap.dedent("""\
         GitLab project: owner/project
         {
+          "type": "job",
           "json_attributes": "here"
         }
     """)
