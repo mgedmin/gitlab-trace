@@ -1,8 +1,8 @@
 Look at GitLab CI job status from the command line
 ==================================================
 
-.. image:: https://travis-ci.com/mgedmin/gitlab-trace.svg?branch=master
-    :target: https://travis-ci.com/mgedmin/gitlab-trace
+.. image:: https://github.com/mgedmin/gitlab-trace/workflows/build/badge.svg?branch=master
+    :target: https://github.com/mgedmin/gitlab-trace/actions
 
 .. image:: https://coveralls.io/repos/mgedmin/gitlab-trace/badge.svg?branch=master
     :target: https://coveralls.io/r/mgedmin/gitlab-trace
