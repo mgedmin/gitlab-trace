@@ -7,6 +7,7 @@ Changelog
 - Gracefully handle a job having no artifacts instead of spewing chained
   tracebacks.
 - Add Python 3.10 support.
+- Drop Python 3.6 support.
 
 
 0.6.0 (2020-11-03)
