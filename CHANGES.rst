@@ -1,7 +1,7 @@
 Changelog
 ==========
 
-0.6.1 (unreleased)
+0.6.1 (2022-10-27)
 ------------------
 
 - Gracefully handle a job having no artifacts instead of spewing chained
