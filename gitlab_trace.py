@@ -38,7 +38,7 @@ def pipe(command: List[str]) -> str:
                           universal_newlines=True).stdout.rstrip('\n')
 
 
-def determine_project(url: str = None) -> Optional[str]:
+def determine_project(url: Optional[str] = None) -> Optional[str]:
     if not url:
         url = pipe('git remote get-url origin'.split())
     if '://' not in url:
