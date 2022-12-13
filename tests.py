@@ -34,11 +34,12 @@ class FakeGitlabModule:
             self.web_url = f'https://git.example.com/{project_id}'
 
     class ProjectPipelines:
-        def list(self, ref=None):
+        def list(self, ref=None, as_list=True):
+            assert not as_list
             if ref == 'empty':
-                return []
+                return
             else:
-                return [
+                yield from [
                     FakeGitlabModule.ProjectPipeline(1005),
                     FakeGitlabModule.ProjectPipeline(997),
                 ]

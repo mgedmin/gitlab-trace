@@ -4,6 +4,7 @@ gitlab-trace: show the status/trace of a GitLab CI pipeline/job.
 """
 
 import argparse
+import itertools
 import json
 import subprocess
 import sys
@@ -179,22 +180,21 @@ def _main() -> None:
             args.branch = determine_branch()
             info(f"Current branch: {args.branch}")
 
-        pipelines = list(project.pipelines.list(ref=args.branch))
-        which = args.pipeline or -1
-        try:
-            pipeline = pipelines[-which-1]
-        except IndexError:
-            pipeline = None
-        if pipeline:
+        which = -args.pipeline - 1 if args.pipeline else 0
+        pipelines = project.pipelines.list(ref=args.branch, as_list=False)
+        skipped = sum(1 for p in itertools.islice(pipelines, which))
+        pipeline = next(pipelines, None)
+        if pipeline is not None:
             args.pipeline = pipeline.id
             if not args.print_url or args.job_name:
                 info(f"{project.web_url}/pipelines/{pipeline.id}")
-        elif not pipelines:
-            fatal(f"Project {args.project} doesn't have any pipelines"
-                  f" for branch {args.branch}")
         else:
-            fatal(f"Project {args.project} has only {len(pipelines)} pipelines"
-                  f" for branch {args.branch}")
+            if which == 0:
+                fatal(f"Project {args.project} doesn't have any pipelines"
+                      f" for branch {args.branch}")
+            else:
+                fatal(f"Project {args.project} has only {skipped} pipelines"
+                      f" for branch {args.branch}")
     elif args.branch:
         if args.job:
             warn(f"Ignoring --branch={args.branch}"

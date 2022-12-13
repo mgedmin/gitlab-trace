@@ -4,7 +4,10 @@ Changelog
 0.6.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix UserWarning: Calling a `list()` method without specifying `all=True` or
+  `as_list=False` will return a maximum of 20 items from python-gitlab.  Should
+  now support choosing 21st or more pipeline from the end when invoked as
+  gitlab-trace -21 etc.
 
 
 0.6.1 (2022-10-27)
