@@ -112,6 +112,16 @@ need the "read_api" access scope.
 Usage
 -----
 
+.. [[[cog
+..   import cog, subprocess, textwrap, os
+..   os.environ['COLUMNS'] = '80'  # consistent line wrapping
+..   helptext = subprocess.run(['gitlab-trace', '--help'],
+..                             capture_output=True, text=True).stdout
+..   cog.outl('\nHelp is available via ::\n')
+..   cog.outl('    $ gitlab-trace --help')
+..   cog.outl(textwrap.indent(helptext, '    '))
+.. ]]]
+
 Help is available via ::
 
     $ gitlab-trace --help
@@ -122,21 +132,21 @@ Help is available via ::
     gitlab-trace: show the status/trace of a GitLab CI pipeline/job.
 
     positional arguments:
-      PIPELINE-ID           select a GitLab CI pipeline by ID (default: the
-                            last pipeline of a git branch)
+      PIPELINE-ID           select a GitLab CI pipeline by ID (default: the last
+                            pipeline of a git branch)
       JOB-NAME              select a GitLab CI pipeline job by name
       NTH-JOB-OF-THAT-NAME  select n-th GitLab CI pipeline job by this name
                             (default: the last one)
 
-    optional arguments:
+    options:
       -h, --help            show this help message and exit
       --version             show program's version number and exit
       -v, --verbose         print more information
       --debug               print even more information, for debugging
       -g NAME, --gitlab NAME
                             select configuration section in ~/.python-gitlab.cfg
-      -p ID, --project ID   select GitLab project ('group/project' or the
-                            numeric ID)
+      -p ID, --project ID   select GitLab project ('group/project' or the numeric
+                            ID)
       --job ID              show the trace of GitLab CI job with this ID
       -b NAME, --branch NAME, --ref NAME
                             show the last pipeline of this git branch (default:
@@ -146,6 +156,7 @@ Help is available via ::
                             job's log
       -a, --artifacts       download build artifacts
 
+.. [[[end]]]
 
 .. _python-gitlab: https://pypi.org/p/python-gitlab
 .. _pipx: https://pipxproject.github.io/pipx/
