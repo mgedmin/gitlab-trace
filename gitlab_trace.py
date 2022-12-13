@@ -15,7 +15,7 @@ import colorama
 import gitlab
 
 
-__version__ = '0.6.2.dev0'
+__version__ = '0.6.2'
 __author__ = "Marius Gedminas <marius@gedmin.as>"
 
 

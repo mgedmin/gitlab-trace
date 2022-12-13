@@ -1,7 +1,7 @@
 Changelog
 ==========
 
-0.6.2 (unreleased)
+0.6.2 (2022-12-13)
 ------------------
 
 - Fix UserWarning: Calling a `list()` method without specifying `all=True` or
