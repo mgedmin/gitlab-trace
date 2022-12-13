@@ -61,6 +61,14 @@ You can look at a different branch ::
        --job=500710 - manual - deploy_stv_alpha
        --job=500747 - success - test_robot
 
+You can look at the Nth latest pipeline ::
+
+    $ gitlab-trace -1   # the latest one, default when run with no arguments
+
+    $ gitlab-trace -2   # the one before that
+
+    $ gitlab-trace --branch=mybranch -1   # the last one on this branch
+
 You can look at a specific pipeline by ID ::
 
     $ gitlab-trace 84185
@@ -72,6 +80,8 @@ You can look at a specific job in that pipeline ::
 If a job has been retried several times you can look at a specific run ::
 
     $ gitlab-trace 84185 test_robot 1
+
+    $ gitlab-trace 84185 test_robot 2
 
 
 Installation
