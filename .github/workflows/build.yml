@@ -76,6 +76,7 @@ jobs:
           - isort
           - check-manifest
           - check-python-versions
+          - cog
 
     steps:
       - name: Git clone
