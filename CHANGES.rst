@@ -4,14 +4,15 @@ Changelog
 0.7.0 (unreleased)
 ------------------
 
+- ``-t``/``--tail [N]`` for showing the last N lines of the trace log.
 - ``-f``/``--follow`` for following a job as it runs.
 
 
 0.6.2 (2022-12-13)
 ------------------
 
-- Fix UserWarning: Calling a `list()` method without specifying `all=True` or
-  `as_list=False` will return a maximum of 20 items from python-gitlab.  Should
+- Fix UserWarning: Calling a ``list()`` method without specifying ``all=True`` or
+  ``as_list=False`` will return a maximum of 20 items from python-gitlab.  Should
   now support choosing 21st or more pipeline from the end when invoked as
   gitlab-trace -21 etc.
 

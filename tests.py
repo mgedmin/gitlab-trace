@@ -203,6 +203,17 @@ def test_fmt_size(size, expected):
     assert gt.fmt_size(size) == expected
 
 
+@pytest.mark.parametrize("s, n, expected", [
+    (b'a\nb\nc\nd\n', None, b'a\nb\nc\nd\n'),
+    (b'a\nb\nc\nd\n', 0, b'a\nb\nc\nd\n'),
+    (b'a\nb\nc\nd\n', 1, b'd\n'),
+    (b'a\nb\nc\nd\n', 2, b'c\nd\n'),
+    (b'a\nb\nc\nd', 1, b'd'),
+])
+def test_tail(s, n, expected):
+    assert gt.tail(s, n) == expected
+
+
 def test_follow_truncation(monkeypatch, capsys):
     job = FakeGitlabModule.ProjectJob(42, 'job', 'running')
     job._refresh = [

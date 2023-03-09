@@ -10,7 +10,8 @@ import subprocess
 import sys
 import time
 import urllib.parse
-from typing import BinaryIO, List, Optional, TypeVar
+from functools import partial
+from typing import BinaryIO, Callable, List, Optional, TypeVar
 
 import colorama
 import gitlab
@@ -97,13 +98,22 @@ def fmt_size(size: Optional[float]) -> str:
     return f'{size:.1f}'.rstrip('0').rstrip('.') + f' {unit}'
 
 
+def tail(s: bytes, n: Optional[int] = None) -> bytes:
+    if not n:
+        return s
+    return b''.join(s.splitlines(True)[-n:])
+
+
 def follow(
-    job: ProjectJob, buffer: Optional[BinaryIO] = None, interval: float = 1.0
+    job: ProjectJob, buffer: Optional[BinaryIO] = None, interval: float = 1.0,
+    tail: Optional[Callable[[bytes], bytes]] = None
 ) -> None:
     if buffer is None:
         buffer = sys.stdout.buffer
+    if tail is None:
+        tail = lambda s: s  # noqa: E731
     trace = job.trace()
-    buffer.write(trace)
+    buffer.write(tail(trace))
     buffer.flush()
     while not job.finished_at:
         time.sleep(interval)
@@ -159,7 +169,11 @@ def _main() -> None:
         ),
     )
     parser.add_argument(
-        "--follow", "-f", action="store_true",
+        "-t", "--tail", metavar='N', nargs='?', type=int, const=10,
+        help="show the last N lines of the trace log",
+    )
+    parser.add_argument(
+        "-f", "--follow", action="store_true",
         help="periodically poll and output additional logs as the job runs",
     )
     parser.add_argument(
@@ -279,9 +293,9 @@ def _main() -> None:
     if args.print_url:
         print(f"{project.web_url}/-/jobs/{job.id}")
     elif args.follow:
-        follow(job)
+        follow(job, tail=partial(tail, n=args.tail))
     else:
-        sys.stdout.buffer.write(job.trace())
+        sys.stdout.buffer.write(tail(job.trace(), args.tail))
     if args.artifacts:
         if not hasattr(job, 'artifacts_file'):
             warn("Job has no artifacts.")
