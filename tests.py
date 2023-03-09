@@ -1,6 +1,7 @@
 import subprocess
 import sys
 import textwrap
+import time
 
 import pytest
 
@@ -10,6 +11,11 @@ import gitlab_trace as gt
 @pytest.fixture(autouse=True)
 def mock_gitlab(monkeypatch):
     monkeypatch.setattr(gt, 'gitlab', FakeGitlabModule())
+
+
+@pytest.fixture(autouse=True)
+def mock_time_sleep(monkeypatch):
+    monkeypatch.setattr(time, 'sleep', lambda seconds: None)
 
 
 class FakeGitlabModule:
@@ -92,12 +98,25 @@ class FakeGitlabModule:
                     'size': 0,
                 }
             self.attributes = {"type": "job", "json_attributes": "here"}
+            self._trace = b'Hello, world!\n'
+            self._refresh = [
+                {},
+                {
+                    '_trace': self._trace + b'Bye!\n',
+                    'finished_at': '2020-09-16T06:16:57.452Z',
+                    'status': 'success',
+                },
+            ]
 
         def artifacts(self, streamed=False, action=None):
             pass
 
+        def refresh(self):
+            if self._refresh:
+                self.__dict__.update(self._refresh.pop(0))
+
         def trace(self):
-            return b'Hello, world!\n'
+            return self._trace
 
 
 def test_fatal():
@@ -182,6 +201,45 @@ def test_fmt_duration(duration, expected):
 ])
 def test_fmt_size(size, expected):
     assert gt.fmt_size(size) == expected
+
+
+def test_follow_truncation(monkeypatch, capsys):
+    job = FakeGitlabModule.ProjectJob(42, 'job', 'running')
+    job._refresh = [
+        {'_trace': b'Hello, world!\nBye?\n'},
+        {'_trace': b'Bye, cruel world!\n'},
+        {'finished_at': '2020-09-16T06:16:57.452Z'},
+    ]
+    gt.follow(job)
+    stdout, stderr = capsys.readouterr()
+    assert stdout == textwrap.dedent("""\
+        Hello, world!
+        Bye?
+        Bye, cruel world!
+    """)
+    assert stderr == textwrap.dedent("""\
+
+        ----- trace was truncated -----
+    """)
+
+
+def test_follow_truncation_flushes(monkeypatch, capsys):
+    job = FakeGitlabModule.ProjectJob(42, 'job', 'running')
+    job._refresh = [
+        {'_trace': b'Hello, world!\nBye?\n'},
+        {'_trace': b'Bye, cruel world!\n'},
+        {'finished_at': '2020-09-16T06:16:57.452Z'},
+    ]
+    gt.follow(job, buffer=sys.stderr.buffer)
+    stdout, stderr = capsys.readouterr()
+    assert stdout == ''
+    assert stderr == textwrap.dedent("""\
+        Hello, world!
+        Bye?
+
+        ----- trace was truncated -----
+        Bye, cruel world!
+    """)
 
 
 def test_main_help(monkeypatch):
@@ -481,6 +539,24 @@ def test_main_job_verbose(monkeypatch, capsys):
     """)
     assert stdout == textwrap.dedent("""\
         Hello, world!
+    """)
+
+
+def test_main_job_follow(monkeypatch, capsys):
+    monkeypatch.setattr(
+        sys, "argv", ["gitlab-trace", "--job=3202", "--follow"]
+    )
+    monkeypatch.setattr(gt, 'determine_project', lambda: 'owner/project')
+    monkeypatch.setattr(gt, 'determine_branch', lambda: 'main')
+    with pytest.raises(SystemExit):
+        gt.main()
+    stdout, stderr = capsys.readouterr()
+    assert stderr == textwrap.dedent("""\
+        GitLab project: owner/project
+    """)
+    assert stdout == textwrap.dedent("""\
+        Hello, world!
+        Bye!
     """)
 
 

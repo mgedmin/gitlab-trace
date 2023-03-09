@@ -126,7 +126,7 @@ Help is available via ::
 
     $ gitlab-trace --help
     usage: gitlab-trace [-h] [--version] [-v] [--debug] [-g NAME] [-p ID]
-                        [--job ID] [-b NAME] [--print-url] [-a]
+                        [--job ID] [-b NAME] [--follow] [--print-url] [-a]
                         [PIPELINE-ID] [JOB-NAME] [NTH-JOB-OF-THAT-NAME]
 
     gitlab-trace: show the status/trace of a GitLab CI pipeline/job.
@@ -151,6 +151,8 @@ Help is available via ::
       -b NAME, --branch NAME, --ref NAME
                             show the last pipeline of this git branch (default:
                             the currently checked out branch)
+      --follow, -f          periodically poll and output additional logs as the
+                            job runs
       --print-url, --print-uri
                             print URL to job page on GitLab instead of printing
                             job's log

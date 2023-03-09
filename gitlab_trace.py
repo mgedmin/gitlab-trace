@@ -8,14 +8,16 @@ import itertools
 import json
 import subprocess
 import sys
+import time
 import urllib.parse
-from typing import List, Optional, TypeVar
+from typing import BinaryIO, List, Optional, TypeVar
 
 import colorama
 import gitlab
+from gitlab.v4.objects import ProjectJob
 
 
-__version__ = '0.6.3.dev0'
+__version__ = '0.7.0.dev0'
 __author__ = "Marius Gedminas <marius@gedmin.as>"
 
 
@@ -27,7 +29,7 @@ def fatal(msg: str) -> None:
 
 
 def warn(msg: str) -> None:
-    print(msg, file=sys.stderr)
+    print(msg, file=sys.stderr, flush=True)
 
 
 def info(msg: str) -> None:
@@ -95,6 +97,29 @@ def fmt_size(size: Optional[float]) -> str:
     return f'{size:.1f}'.rstrip('0').rstrip('.') + f' {unit}'
 
 
+def follow(
+    job: ProjectJob, buffer: Optional[BinaryIO] = None, interval: float = 1.0
+) -> None:
+    if buffer is None:
+        buffer = sys.stdout.buffer
+    trace = job.trace()
+    buffer.write(trace)
+    buffer.flush()
+    while not job.finished_at:
+        time.sleep(interval)
+        job.refresh()
+        new_trace = job.trace()
+        if not new_trace.startswith(trace):
+            # maybe the beginning got truncated?
+            warn("\n----- trace was truncated -----")
+            trace = ""
+        new_data = new_trace[len(trace):]
+        if new_data:
+            buffer.write(new_data)
+            buffer.flush()
+        trace = new_trace
+
+
 def _main() -> None:
     colorama.init()
 
@@ -132,6 +157,10 @@ def _main() -> None:
             "show the last pipeline of this git branch"
             " (default: the currently checked out branch)"
         ),
+    )
+    parser.add_argument(
+        "--follow", "-f", action="store_true",
+        help="periodically poll and output additional logs as the job runs",
     )
     parser.add_argument(
         "--print-url", "--print-uri", action="store_true",
@@ -249,6 +278,8 @@ def _main() -> None:
         info(json.dumps(job.attributes, indent=2))
     if args.print_url:
         print(f"{project.web_url}/-/jobs/{job.id}")
+    elif args.follow:
+        follow(job)
     else:
         sys.stdout.buffer.write(job.trace())
     if args.artifacts:

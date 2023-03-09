@@ -1,10 +1,10 @@
 Changelog
 ==========
 
-0.6.3 (unreleased)
+0.7.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- ``-f``/``--follow`` for following a job as it runs.
 
 
 0.6.2 (2022-12-13)
