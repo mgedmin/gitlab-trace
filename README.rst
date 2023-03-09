@@ -34,9 +34,18 @@ You can take a closer look at a failed job by passing the job ID ::
     Uploading artifacts to coordinator... ok            id=500796 responseStatus=201 Created token=6yaRqQPr
     ERROR: Job failed: exit code 1
 
-You can watch the job while it is running ::
+You can watch a job while it is running ::
 
     $ gitlab-trace --job=500796 --tail --follow
+    ...
+    Uploading artifacts...
+    robottests/output: found 540 matching files
+    Uploading artifacts to coordinator... ok            id=500796 responseStatus=201 Created token=6yaRqQPr
+    ERROR: Job failed: exit code 1
+
+You can watch the currently running job ::
+
+    $ gitlab-trace --running --tail --follow
     ...
     Uploading artifacts...
     robottests/output: found 540 matching files
@@ -135,7 +144,8 @@ Help is available via ::
 
     $ gitlab-trace --help
     usage: gitlab-trace [-h] [--version] [-v] [--debug] [-g NAME] [-p ID]
-                        [--job ID] [-b NAME] [-t [N]] [-f] [--print-url] [-a]
+                        [--job ID] [--running] [-b NAME] [-t [N]] [-f]
+                        [--print-url] [-a]
                         [PIPELINE-ID] [JOB-NAME] [NTH-JOB-OF-THAT-NAME]
 
     gitlab-trace: show the status/trace of a GitLab CI pipeline/job.
@@ -157,6 +167,9 @@ Help is available via ::
       -p ID, --project ID   select GitLab project ('group/project' or the numeric
                             ID)
       --job ID              show the trace of GitLab CI job with this ID
+      --running             show the trace of the currently running GitLab CI job,
+                            if there is one (if there's more than one, picks the
+                            first one)
       -b NAME, --branch NAME, --ref NAME
                             show the last pipeline of this git branch (default:
                             the currently checked out branch)

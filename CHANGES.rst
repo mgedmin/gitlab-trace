@@ -6,6 +6,7 @@ Changelog
 
 - ``-t``/``--tail [N]`` for showing the last N lines of the trace log.
 - ``-f``/``--follow`` for following a job as it runs.
+- ``--running`` for automatically selecting the first running job.
 
 
 0.6.2 (2022-12-13)

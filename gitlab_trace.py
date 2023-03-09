@@ -162,6 +162,13 @@ def _main() -> None:
         help="show the trace of GitLab CI job with this ID",
     )
     parser.add_argument(
+        "--running", action="store_true",
+        help=(
+            "show the trace of the currently running GitLab CI job,"
+            " if there is one (if there's more than one, picks the first one)"
+        ),
+    )
+    parser.add_argument(
         "-b", "--branch", "--ref", metavar="NAME",
         help=(
             "show the last pipeline of this git branch"
@@ -203,6 +210,9 @@ def _main() -> None:
         ),
     )
     args = parser.parse_args()
+
+    if args.job and args.running:
+        warn(f"Ignoring --running because --job={args.job} was specified")
 
     if args.job and args.pipeline:
         warn(f"Ignoring pipeline ({args.pipeline})"
@@ -276,11 +286,18 @@ def _main() -> None:
             for job in jobs:
                 status = fmt_status(job.status)
                 print(f"   --job={job.id} - {status} - {job.name}")
-            if args.artifacts:
-                warn("Ignoring --artifacts because no job was selected.")
-            if args.print_url:
-                warn("Ignoring --print-url because no job was selected.")
-            sys.exit(0)
+                if args.running and job.status == 'running' and not args.job:
+                    args.job = job.id
+            if args.job:
+                info(f"Automatically selected --job={args.job}")
+            else:
+                if args.running:
+                    warn("Ignoring --running because no job was running.")
+                if args.artifacts:
+                    warn("Ignoring --artifacts because no job was selected.")
+                if args.print_url:
+                    warn("Ignoring --print-url because no job was selected.")
+                sys.exit(0)
 
     job = project.jobs.get(args.job)
     if args.verbose:

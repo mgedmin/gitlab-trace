@@ -260,13 +260,20 @@ def test_main_help(monkeypatch):
 
 
 def test_main_warn_extra_args(monkeypatch, capsys):
-    monkeypatch.setattr(sys, 'argv', ['gitlab-trace', '--job=123', '456'])
+    monkeypatch.setattr(
+        sys, 'argv', ['gitlab-trace', '--running', '--job=123', '456']
+    )
     monkeypatch.setattr(gt, 'determine_project', lambda: None)
     with pytest.raises(SystemExit):
         gt.main()
+    stdout, stderr = capsys.readouterr()
+    assert (
+        'Ignoring --running because --job=123 was specified'
+        in stderr
+    )
     assert (
         'Ignoring pipeline (456) because --job=123 was specified'
-        in capsys.readouterr().err
+        in stderr
     )
 
 
@@ -363,6 +370,27 @@ def test_main_artifacts_no_job_selected(monkeypatch, capsys):
         GitLab project: owner/project
         Current branch: main
         https://git.example.com/owner/project/pipelines/1005
+        Ignoring --artifacts because no job was selected.
+    """)
+    assert stdout == textwrap.dedent("""\
+        Available jobs for pipeline #1005:
+           --job=3201 - success - build
+           --job=3202 - failed - test
+    """)
+
+
+def test_main_no_running_job(monkeypatch, capsys):
+    monkeypatch.setattr(sys, 'argv', ['gitlab-trace', '--running', '-a'])
+    monkeypatch.setattr(gt, 'determine_project', lambda: 'owner/project')
+    monkeypatch.setattr(gt, 'determine_branch', lambda: 'main')
+    with pytest.raises(SystemExit):
+        gt.main()
+    stdout, stderr = capsys.readouterr()
+    assert stderr == textwrap.dedent("""\
+        GitLab project: owner/project
+        Current branch: main
+        https://git.example.com/owner/project/pipelines/1005
+        Ignoring --running because no job was running.
         Ignoring --artifacts because no job was selected.
     """)
     assert stdout == textwrap.dedent("""\
@@ -502,6 +530,27 @@ def test_main_job_by_name_multiple_nth(monkeypatch, capsys):
         Selecting #2: 3303
     """)
     assert stdout == textwrap.dedent("""\
+        Hello, world!
+    """)
+
+
+def test_main_running(monkeypatch, capsys):
+    monkeypatch.setattr(sys, 'argv', ['gitlab-trace', '1009', '--running'])
+    monkeypatch.setattr(gt, 'determine_project', lambda: 'owner/project')
+    monkeypatch.setattr(gt, 'determine_branch', lambda: 'refactoring')
+    with pytest.raises(SystemExit):
+        gt.main()
+    stdout, stderr = capsys.readouterr()
+    assert stderr == textwrap.dedent("""\
+        GitLab project: owner/project
+        Automatically selected --job=3304
+    """)
+    assert stdout == textwrap.dedent("""\
+        Available jobs for pipeline #1009:
+           --job=3301 - success - build
+           --job=3302 - failed - test
+           --job=3303 - failed - test
+           --job=3304 - running - test
         Hello, world!
     """)
 
