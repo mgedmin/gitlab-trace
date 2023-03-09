@@ -1,7 +1,7 @@
 Changelog
 ==========
 
-0.7.0 (unreleased)
+0.7.0 (2023-03-09)
 ------------------
 
 - ``-t``/``--tail [N]`` for showing the last N lines of the trace log.
