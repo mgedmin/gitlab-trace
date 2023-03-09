@@ -34,6 +34,15 @@ You can take a closer look at a failed job by passing the job ID ::
     Uploading artifacts to coordinator... ok            id=500796 responseStatus=201 Created token=6yaRqQPr
     ERROR: Job failed: exit code 1
 
+You can watch the job while it is running ::
+
+    $ gitlab-trace --job=500796 --tail --follow
+    ...
+    Uploading artifacts...
+    robottests/output: found 540 matching files
+    Uploading artifacts to coordinator... ok            id=500796 responseStatus=201 Created token=6yaRqQPr
+    ERROR: Job failed: exit code 1
+
 You can look at a different branch ::
 
     $ gitlab-trace --branch=master
