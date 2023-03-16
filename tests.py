@@ -543,7 +543,7 @@ def test_main_running(monkeypatch, capsys):
     stdout, stderr = capsys.readouterr()
     assert stderr == textwrap.dedent("""\
         GitLab project: owner/project
-        Automatically selected --job=3304
+        Automatically selected --job=3304 (test)
     """)
     assert stdout == textwrap.dedent("""\
         Available jobs for pipeline #1009:

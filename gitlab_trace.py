@@ -288,8 +288,9 @@ def _main() -> None:
                 print(f"   --job={job.id} - {status} - {job.name}")
                 if args.running and job.status == 'running' and not args.job:
                     args.job = job.id
+                    job_name = job.name
             if args.job:
-                info(f"Automatically selected --job={args.job}")
+                info(f"Automatically selected --job={args.job} ({job_name})")
             else:
                 if args.running:
                     warn("Ignoring --running because no job was running.")
