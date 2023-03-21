@@ -4,6 +4,7 @@ import textwrap
 import time
 
 import pytest
+import requests.exceptions
 
 import gitlab_trace as gt
 
@@ -31,6 +32,8 @@ class FakeGitlabModule:
 
     class Projects:
         def get(self, project_id):
+            if project_id == '404':
+                raise requests.exceptions.HTTPError
             return FakeGitlabModule.Project(project_id)
 
     class Project:
@@ -697,5 +700,11 @@ def raise_keyboard_interrupt(*args, **kw):
 def test_main_suppresses_keyboard_interrupt(monkeypatch, capsys):
     monkeypatch.setattr(sys, 'argv', ['gitlab-trace', '--job=3202'])
     monkeypatch.setattr(gt, 'determine_project', raise_keyboard_interrupt)
+    with pytest.raises(SystemExit):
+        gt.main()
+
+
+def test_main_reports_network_issues_without_tracebacks(monkeypatch, capsys):
+    monkeypatch.setattr(sys, 'argv', ['gitlab-trace', '--project=404'])
     with pytest.raises(SystemExit):
         gt.main()

@@ -15,6 +15,7 @@ from typing import BinaryIO, Callable, List, Optional, TypeVar
 
 import colorama
 import gitlab
+import requests.exceptions
 from gitlab.v4.objects import ProjectJob
 
 
@@ -328,6 +329,8 @@ def _main() -> None:
 def main() -> None:
     try:
         _main()
+    except requests.exceptions.RequestException as e:
+        sys.exit(str(e))
     except (KeyboardInterrupt, BrokenPipeError):
         # suppress tracebacks from these
         sys.exit(0)
