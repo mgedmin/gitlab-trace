@@ -4,7 +4,7 @@ Changelog
 0.7.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add Python 3.12 support.
 
 
 0.7.0 (2023-03-09)
