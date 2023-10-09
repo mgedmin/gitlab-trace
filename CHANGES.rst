@@ -5,6 +5,9 @@ Changelog
 ------------------
 
 - Add Python 3.12 support.
+- Show the name of the automatically selected job when using ``--running`` 
+- Shorter output for network errors (suppress tracebacks, print just the error
+  itself).
 - Fix DeprecationWarning: ``as_list=False`` is deprecated and will be removed in
   a future version. Use ``iterator=True`` instead.
 
