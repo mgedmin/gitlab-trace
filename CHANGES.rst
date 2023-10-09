@@ -5,6 +5,8 @@ Changelog
 ------------------
 
 - Add Python 3.12 support.
+- Fix DeprecationWarning: ``as_list=False`` is deprecated and will be removed in
+  a future version. Use ``iterator=True`` instead.
 
 
 0.7.0 (2023-03-09)

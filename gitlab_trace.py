@@ -235,7 +235,7 @@ def _main() -> None:
             info(f"Current branch: {args.branch}")
 
         which = -args.pipeline - 1 if args.pipeline else 0
-        pipelines = project.pipelines.list(ref=args.branch, as_list=False)
+        pipelines = project.pipelines.list(ref=args.branch, iterator=True)
         skipped = sum(1 for p in itertools.islice(pipelines, which))
         pipeline = next(pipelines, None)
         if pipeline is not None:

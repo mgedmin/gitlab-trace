@@ -43,8 +43,8 @@ class FakeGitlabModule:
             self.web_url = f'https://git.example.com/{project_id}'
 
     class ProjectPipelines:
-        def list(self, ref=None, as_list=True):
-            assert not as_list
+        def list(self, ref=None, iterator=False):
+            assert iterator
             if ref == 'empty':
                 return
             else:
