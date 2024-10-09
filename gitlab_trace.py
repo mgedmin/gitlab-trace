@@ -19,7 +19,7 @@ import requests.exceptions
 from gitlab.v4.objects import ProjectJob
 
 
-__version__ = '0.7.2'
+__version__ = '0.7.3.dev0'
 __author__ = "Marius Gedminas <marius@gedmin.as>"
 
 
