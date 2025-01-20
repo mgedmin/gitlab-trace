@@ -1,10 +1,10 @@
 Changelog
 ==========
 
-0.7.3 (unreleased)
+0.8.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Drop Python 3.7 support.
 
 
 0.7.2 (2024-10-09)
