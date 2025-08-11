@@ -46,6 +46,24 @@ def pipe(command: List[str]) -> str:
 def determine_project(url: Optional[str] = None) -> Optional[str]:
     if not url:
         url = pipe('git remote get-url origin'.split())
+
+    # Handle git@ SSH URLs (e.g., git@gitlab.com:owner/project.git)
+    if url.startswith('git@'):
+        # Parse git@ format: git@hostname:path
+        try:
+            if ':' in url:
+                # Remove 'git@' prefix
+                host_part, path_part = url[4:].split(':', 1)
+                if host_part == 'github.com':
+                    return None
+                project = path_part.strip('/')
+                if project.endswith('.git'):
+                    project = project[:-len('.git')]
+                return project
+        except ValueError:
+            return None
+
+    # Handle URLs with protocol (http://, https://, ssh://)
     if '://' not in url:
         return None
     if urllib.parse.urlparse(url).hostname in ('', 'github.com'):

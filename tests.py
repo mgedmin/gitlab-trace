@@ -144,6 +144,10 @@ def test_pipe():
     ('https://gitlab.com/owner/project.git', 'owner/project'),
     ('https://gitlab.com:443/owner/project.git', 'owner/project'),
     ('ssh://git@gitlab.example.com:23/owner/project.git', 'owner/project'),
+    ('git@gitlab.com:owner/project.git', 'owner/project'),
+    ('git@gitlab.example.com:group/subgroup/project.git', 'group/subgroup/project'),
+    ('git@my-gitlab.company.com:owner/project', 'owner/project'),
+    ('git@github.com:owner/project.git', None),
     ('https://github.com/owner/project', None),
     ('fridge:git/random.git', None),
 ])
