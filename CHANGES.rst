@@ -5,6 +5,8 @@ Changelog
 ------------------
 
 - Drop Python 3.7 support.
+- Support remote URLs of the form ``git@host:path`` (`pull 5
+  <https://github.com/mgedmin/gitlab-trace/pull/5>`_).
 
 
 0.7.2 (2024-10-09)
