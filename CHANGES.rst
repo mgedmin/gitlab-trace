@@ -1,7 +1,7 @@
 Changelog
 ==========
 
-0.8.0 (unreleased)
+0.8.0 (2025-08-18)
 ------------------
 
 - Drop Python 3.7 support.
