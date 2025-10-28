@@ -1,10 +1,11 @@
 Changelog
 ==========
 
-0.8.1 (unreleased)
+0.9.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add Python 3.14 support.
+- Drop Python 3.8 and 3.9 support.
 
 
 0.8.0 (2025-08-18)
